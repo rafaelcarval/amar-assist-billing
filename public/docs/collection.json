@@ -1,0 +1,492 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost:8080"
+        }
+    ],
+    "info": {
+        "name": "Amar Assist Billing API",
+        "_postman_id": "0a0d41ff-646b-4bbb-8ea3-80ced542d4d3",
+        "description": "API REST para gerenciamento de clientes, contratos e cobran\u00e7as.",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Clientes",
+            "description": "",
+            "item": [
+                {
+                    "name": "Listar clientes",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"vmqeopfuudtdsufvyvddq\",\"document\":\"amniihfqcoyn\",\"status\":\"INACTIVE\",\"per_page\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "vary",
+                                    "value": "Origin"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Criar cliente",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"vmqeopfuudtdsufvyvddq\",\"document\":\"consequatur\",\"address\":\"mqeopfuudtdsufvyvddqa\",\"contact\":\"mniihfqcoynlazghdtqtq\",\"status\":\"INACTIVE\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Exibir cliente",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers\/:customer_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers\/:customer_id",
+                            "variable": [
+                                {
+                                    "id": "customer_id",
+                                    "key": "customer_id",
+                                    "value": 2,
+                                    "description": "The ID of the customer."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "vary",
+                                    "value": "Origin"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Atualizar cliente",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers\/:customer_id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers\/:customer_id",
+                            "variable": [
+                                {
+                                    "id": "customer_id",
+                                    "key": "customer_id",
+                                    "value": 2,
+                                    "description": "The ID of the customer."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"vmqeopfuudtdsufvyvddq\",\"document\":\"consequatur\",\"address\":\"mqeopfuudtdsufvyvddqa\",\"contact\":\"mniihfqcoynlazghdtqtq\",\"status\":\"INACTIVE\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Alterar situa\u00e7\u00e3o do cliente",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers\/:customer_id\/status",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers\/:customer_id\/status",
+                            "variable": [
+                                {
+                                    "id": "customer_id",
+                                    "key": "customer_id",
+                                    "value": 2,
+                                    "description": "The ID of the customer."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Cobran\u00e7as",
+            "description": "",
+            "item": [
+                {
+                    "name": "Listar cobran\u00e7as",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/charges",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/charges"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "Cobran\u00e7as abertas e atrasadas s\u00e3o exibidas primeiro."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "vary",
+                                    "value": "Origin"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Gerar cobran\u00e7a",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/contracts\/:contract_id\/charges",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/contracts\/:contract_id\/charges",
+                            "variable": [
+                                {
+                                    "id": "contract_id",
+                                    "key": "contract_id",
+                                    "value": 2,
+                                    "description": "The ID of the contract."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"base_amount\":\"2.77\",\"payment_method\":\"CARD\",\"reference_date\":\"2026-08-24\",\"barcode\":\"tdsufvyvddqamniihfqco\",\"pix_key\":\"ynlazghdtqtqxbajwbpil\",\"card_token\":\"pmufinllwloauydlsmsju\",\"card_brand\":\"ryvojcybzvrbyickznkyg\",\"card_last_four\":\"8107\",\"card_exp_month\":1,\"card_exp_year\":1295}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Marcar cobran\u00e7a como paga",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/charges\/:charge_id\/pay",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/charges\/:charge_id\/pay",
+                            "variable": [
+                                {
+                                    "id": "charge_id",
+                                    "key": "charge_id",
+                                    "value": 1,
+                                    "description": "The ID of the charge."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Contratos",
+            "description": "",
+            "item": [
+                {
+                    "name": "Listar contratos de um cliente",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers\/:customer_id\/contracts",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers\/:customer_id\/contracts",
+                            "variable": [
+                                {
+                                    "id": "customer_id",
+                                    "key": "customer_id",
+                                    "value": 2,
+                                    "description": "The ID of the customer."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "vary",
+                                    "value": "Origin"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Criar contrato",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/customers\/:customer_id\/contracts",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/customers\/:customer_id\/contracts",
+                            "variable": [
+                                {
+                                    "id": "customer_id",
+                                    "key": "customer_id",
+                                    "value": 2,
+                                    "description": "The ID of the customer."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"type\":\"PJ\",\"billing_cycle_day\":1,\"active\":true}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Endpoints",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/user",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/user",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/user"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "vary",
+                                    "value": "Origin"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "noauth"
+    }
+}

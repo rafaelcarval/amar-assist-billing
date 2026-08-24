@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,16 @@ Route::get('/health', function () {
         'timestamp' => now()->toIso8601String(),
     ]);
 });
+
+Route::view('/app/{any?}', 'app')
+->where('any', '.*');
+
+Route::post(
+    '/login',
+    [AuthController::class, 'login']
+)->middleware('throttle:login');
+
+Route::post(
+    '/logout',
+    [AuthController::class, 'logout']
+)->middleware('auth');

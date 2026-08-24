@@ -43,6 +43,20 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+        $this->renderable(
+            function (
+                CustomerHasContractException $exception,
+                $request
+            ) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'message' =>
+                            $exception->getMessage(),
+                    ], 422);
+                }
+            }
+        );
+
         $this->reportable(function (Throwable $e) {
             //
         });
