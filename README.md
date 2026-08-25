@@ -197,7 +197,7 @@ Eles serão executados pelos containers Docker.
 ## 1. Clonar o repositório
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/rafaelcarval/amar-assist-billing
 ```
 
 Entre no diretório:
@@ -205,9 +205,6 @@ Entre no diretório:
 ```bash
 cd amar-assist-billing
 ```
-
-> Substitua `<URL_DO_REPOSITORIO>` pela URL real deste repositório.
-
 ---
 
 ## 2. Criar o arquivo de ambiente
