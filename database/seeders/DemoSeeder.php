@@ -8,6 +8,7 @@ use App\Enums\CustomerStatus;
 use App\Enums\PaymentMethod;
 use App\Models\Charge;
 use App\Models\Customer;
+use App\Services\ChargeSummaryService;
 use Illuminate\Database\Seeder;
 
 class DemoSeeder extends Seeder
@@ -17,6 +18,12 @@ class DemoSeeder extends Seeder
         if (! app()->environment('local')) {
             return;
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cliente pessoa física
+        |--------------------------------------------------------------------------
+        */
 
         $person = Customer::updateOrCreate(
             [
@@ -42,18 +49,32 @@ class DemoSeeder extends Seeder
                 ]
             );
 
-        $overdueCharge = Charge::firstOrCreate(
+        /*
+        |--------------------------------------------------------------------------
+        | Cobrança PIX vencida
+        |--------------------------------------------------------------------------
+        |
+        | R$ 1.000,00
+        | 5 dias de atraso
+        | 1% ao dia
+        | Multa: R$ 50,00
+        |
+        */
+
+        $overdueCharge = Charge::updateOrCreate(
             [
                 'contract_id' => $personContract->id,
                 'payment_method' => PaymentMethod::PIX,
-                'due_date' => now()
-                    ->subDays(5)
-                    ->toDateString(),
             ],
             [
                 'base_amount' => '1000.00',
                 'late_fee_amount' => '50.00',
                 'total_amount' => '1050.00',
+
+                'due_date' => now()
+                    ->subDays(5)
+                    ->toDateString(),
+
                 'status' => ChargeStatus::OPEN,
                 'paid_at' => null,
             ]
@@ -65,8 +86,22 @@ class DemoSeeder extends Seeder
                 [],
                 [
                     'pix_key' => 'financeiro@amar.test',
+
+                    'barcode' => null,
+
+                    'card_token' => null,
+                    'card_brand' => null,
+                    'card_last_four' => null,
+                    'card_exp_month' => null,
+                    'card_exp_year' => null,
                 ]
             );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cliente pessoa jurídica
+        |--------------------------------------------------------------------------
+        */
 
         $company = Customer::updateOrCreate(
             [
@@ -92,18 +127,26 @@ class DemoSeeder extends Seeder
                 ]
             );
 
-        $futureCharge = Charge::firstOrCreate(
+        /*
+        |--------------------------------------------------------------------------
+        | Cobrança de boleto em aberto
+        |--------------------------------------------------------------------------
+        */
+
+        $futureCharge = Charge::updateOrCreate(
             [
                 'contract_id' => $companyContract->id,
                 'payment_method' => PaymentMethod::BOLETO,
-                'due_date' => now()
-                    ->addDays(7)
-                    ->toDateString(),
             ],
             [
                 'base_amount' => '800.00',
                 'late_fee_amount' => '0.00',
                 'total_amount' => '800.00',
+
+                'due_date' => now()
+                    ->addDays(7)
+                    ->toDateString(),
+
                 'status' => ChargeStatus::OPEN,
                 'paid_at' => null,
             ]
@@ -116,23 +159,41 @@ class DemoSeeder extends Seeder
                 [
                     'barcode' =>
                         '34191790010104351004791020150008291070000080000',
+
+                    'pix_key' => null,
+
+                    'card_token' => null,
+                    'card_brand' => null,
+                    'card_last_four' => null,
+                    'card_exp_month' => null,
+                    'card_exp_year' => null,
                 ]
             );
 
-        $paidCharge = Charge::firstOrCreate(
+        /*
+        |--------------------------------------------------------------------------
+        | Cobrança de cartão já paga
+        |--------------------------------------------------------------------------
+        */
+
+        $paidCharge = Charge::updateOrCreate(
             [
                 'contract_id' => $personContract->id,
                 'payment_method' => PaymentMethod::CARD,
-                'due_date' => now()
-                    ->subDays(10)
-                    ->toDateString(),
             ],
             [
                 'base_amount' => '300.00',
                 'late_fee_amount' => '0.00',
                 'total_amount' => '300.00',
+
+                'due_date' => now()
+                    ->subDays(10)
+                    ->toDateString(),
+
                 'status' => ChargeStatus::PAID,
-                'paid_at' => now()->subDays(10),
+
+                'paid_at' => now()
+                    ->subDays(10),
             ]
         );
 
@@ -146,8 +207,21 @@ class DemoSeeder extends Seeder
                     'card_last_four' => '4242',
                     'card_exp_month' => 12,
                     'card_exp_year' => now()->year + 2,
+
+                    'barcode' => null,
+                    'pix_key' => null,
                 ]
             );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cliente sem contrato
+        |--------------------------------------------------------------------------
+        |
+        | Útil para demonstrar que um cliente sem contrato
+        | pode ser ativado/desativado normalmente.
+        |
+        */
 
         Customer::updateOrCreate(
             [
@@ -160,5 +234,20 @@ class DemoSeeder extends Seeder
                 'status' => CustomerStatus::INACTIVE,
             ]
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cache
+        |--------------------------------------------------------------------------
+        |
+        | Como o Seeder manipula Charge diretamente, ele não passa pelo
+        | ChargeService e, portanto, precisamos invalidar explicitamente
+        | o resumo cacheado.
+        |
+        */
+
+        app(
+            ChargeSummaryService::class
+        )->forget();
     }
 }

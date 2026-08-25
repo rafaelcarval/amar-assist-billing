@@ -10,13 +10,16 @@ use App\Http\Resources\ChargeResource;
 use App\Models\Charge;
 use App\Models\Contract;
 use App\Services\ChargeService;
+use App\Services\ChargeSummaryService;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ChargeController extends Controller
 {
     public function __construct(
-        private readonly ChargeService $chargeService
+        private readonly ChargeService $chargeService,
+        private readonly ChargeSummaryService $chargeSummaryService
     ) {
     }
 
@@ -62,6 +65,27 @@ class ChargeController extends Controller
     }
 
     /**
+     * Resumo das cobranças
+     *
+     * Retorna os totais de cobranças abertas, vencidas e pagas,
+     * além do valor total em aberto.
+     *
+     * O resultado é armazenado temporariamente em cache Redis.
+     *
+     * @group Cobranças
+     */
+    public function summary(): JsonResponse
+    {
+        $summary = $this
+            ->chargeSummaryService
+            ->get();
+
+        return response()->json([
+            'data' => $summary,
+        ]);
+    }
+
+    /**
      * Gerar cobrança
      *
      * @group Cobranças
@@ -72,13 +96,7 @@ class ChargeController extends Controller
     ): ChargeResource {
         $data = $request->validated();
 
-        $referenceDate = isset(
-            $data['reference_date']
-        )
-            ? CarbonImmutable::parse(
-                $data['reference_date']
-            )
-            : CarbonImmutable::today();
+        $referenceDate = CarbonImmutable::today();
 
         $charge = $this
             ->chargeService

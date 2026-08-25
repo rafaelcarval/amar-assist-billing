@@ -8,6 +8,7 @@ use App\Models\Contract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
+use Carbon\Carbon;
 
 class ChargeApiTest extends TestCase
 {
@@ -24,6 +25,10 @@ class ChargeApiTest extends TestCase
 
     public function test_it_generates_pix_charge(): void
     {
+        $this->travelTo(
+            Carbon::parse('2026-08-25')
+        );
+
         $contract = Contract::factory()->create([
             'billing_cycle_day' => 20,
         ]);
@@ -34,20 +39,25 @@ class ChargeApiTest extends TestCase
                 'base_amount' => '1000.00',
                 'payment_method' => 'PIX',
                 'pix_key' => 'billing@amar.test',
-                'reference_date' => '2026-08-25',
             ]
         );
 
         $response
             ->assertSuccessful()
             ->assertJsonPath(
-                'data.total_amount',
-                '1050.00'
+                'data.due_date',
+                '2026-08-20'
             )
             ->assertJsonPath(
                 'data.late_fee_amount',
                 '50.00'
+            )
+            ->assertJsonPath(
+                'data.total_amount',
+                '1050.00'
             );
+
+        $this->travelBack();
     }
 
     public function test_pix_requires_pix_key(): void

@@ -30,11 +30,6 @@ class GenerateChargeRequest extends FormRequest
                 ]),
             ],
 
-            'reference_date' => [
-                'nullable',
-                'date_format:Y-m-d',
-            ],
-
             'barcode' => [
                 'nullable',
                 'string',

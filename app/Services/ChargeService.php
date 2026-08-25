@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Enums\ChargeStatus;
 use App\Enums\PaymentMethod;
+use App\Events\ChargeGenerated;
 use App\Models\Charge;
 use App\Models\Contract;
-use App\Events\ChargeGenerated;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +14,8 @@ final class ChargeService
 {
     public function __construct(
         private readonly BillingCycleService $billingCycleService,
-        private readonly ChargeCalculator $chargeCalculator
+        private readonly ChargeCalculator $chargeCalculator,
+        private readonly ChargeSummaryService $chargeSummaryService
     ) {
     }
 
@@ -39,7 +40,7 @@ final class ChargeService
                         $contract->billing_cycle_day,
                         $referenceDate
                     );
-    
+
                 $calculation = $this
                     ->chargeCalculator
                     ->calculate(
@@ -47,32 +48,32 @@ final class ChargeService
                         $dueDate,
                         $referenceDate
                     );
-    
+
                 $charge = $contract
                     ->charges()
                     ->create([
                         'payment_method' =>
                             $paymentMethod,
-    
+
                         'base_amount' =>
                             $calculation->baseAmount,
-    
+
                         'late_fee_amount' =>
                             $calculation->lateFeeAmount,
-    
+
                         'total_amount' =>
                             $calculation->totalAmount,
-    
+
                         'due_date' =>
                             $dueDate->toDateString(),
-    
+
                         'status' =>
                             ChargeStatus::OPEN,
-    
+
                         'paid_at' =>
                             null,
                     ]);
-    
+
                 $charge
                     ->paymentDetail()
                     ->create(
@@ -81,25 +82,39 @@ final class ChargeService
                             $paymentDetails
                         )
                     );
-    
+
                 return $charge->load(
                     'paymentDetail',
                     'contract.customer'
                 );
             }
         );
-    
+
+        /*
+         * A criação da cobrança altera os dados
+         * utilizados pelo resumo.
+         */
+        $this
+            ->chargeSummaryService
+            ->forget();
+
+        /*
+         * O evento é disparado somente depois
+         * do commit da transação.
+         */
         event(
             new ChargeGenerated($charge)
         );
-    
+
         return $charge;
     }
 
     public function markAsPaid(
         Charge $charge
     ): Charge {
-        if ($charge->status === ChargeStatus::PAID) {
+        if (
+            $charge->status === ChargeStatus::PAID
+        ) {
             return $charge;
         }
 
@@ -107,6 +122,18 @@ final class ChargeService
             'status' => ChargeStatus::PAID,
             'paid_at' => now(),
         ]);
+
+        /*
+         * O resumo mudou:
+         *
+         * - quantidade de abertas
+         * - quantidade de pagas
+         * - quantidade de vencidas, possivelmente
+         * - valor total em aberto
+         */
+        $this
+            ->chargeSummaryService
+            ->forget();
 
         return $charge->refresh();
     }
@@ -117,11 +144,13 @@ final class ChargeService
     ): array {
         return match ($paymentMethod) {
             PaymentMethod::BOLETO => [
-                'barcode' => $details['barcode'] ?? null,
+                'barcode' =>
+                    $details['barcode'] ?? null,
             ],
 
             PaymentMethod::PIX => [
-                'pix_key' => $details['pix_key'] ?? null,
+                'pix_key' =>
+                    $details['pix_key'] ?? null,
             ],
 
             PaymentMethod::CARD => [

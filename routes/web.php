@@ -29,6 +29,11 @@ Route::get('/health', function () {
 Route::view('/app/{any?}', 'app')
 ->where('any', '.*');
 
+Route::redirect(
+    '/login',
+    '/app/login'
+)->name('login');
+
 Route::post(
     '/login',
     [AuthController::class, 'login']

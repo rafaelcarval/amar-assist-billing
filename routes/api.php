@@ -89,6 +89,11 @@ Route::middleware('auth:sanctum')
         */
 
         Route::get(
+            '/charges/summary',
+            [ChargeController::class, 'summary']
+        );
+
+        Route::get(
             '/charges',
             [ChargeController::class, 'index']
         );
