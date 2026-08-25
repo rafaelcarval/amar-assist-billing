@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    name: Tests and Build
+
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: amar_billing_test
+          MYSQL_USER: amar
+          MYSQL_PASSWORD: amar
+
+        ports:
+          - 3306:3306
+
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+      redis:
+        image: redis:7-alpine
+
+        ports:
+          - 6379:6379
+
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      APP_NAME: "Amar Assist Billing"
+      APP_ENV: testing
+      APP_DEBUG: true
+      APP_URL: http://localhost
+
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: amar_billing_test
+      DB_USERNAME: amar
+      DB_PASSWORD: amar
+
+      CACHE_DRIVER: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      BROADCAST_DRIVER: log
+
+      REDIS_CLIENT: phpredis
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+
+      MAIL_MAILER: array
+
+      PUSHER_APP_ID: amar-app
+      PUSHER_APP_KEY: amar-key
+      PUSHER_APP_SECRET: amar-secret
+      PUSHER_APP_CLUSTER: mt1
+
+      VITE_PUSHER_APP_KEY: amar-key
+      VITE_PUSHER_APP_CLUSTER: mt1
+      VITE_PUSHER_HOST: localhost
+      VITE_PUSHER_PORT: 6001
+      VITE_PUSHER_SCHEME: http
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, pdo_mysql, redis
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate --no-check-publish
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare Laravel environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan optimize:clear
+
+      - name: Run database migrations
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit tests
+        run: php artisan test
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build Vue application
+        run: npm run build
